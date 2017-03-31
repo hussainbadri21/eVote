@@ -47,10 +47,9 @@ public class MainActivity extends AppCompatActivity {
             }
         }) {
             @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put("uid","1234");
-                return params;
+            public byte[] getBody() throws AuthFailureError {
+                String uid = "1234"; // put your json
+                return uid.getBytes();
             }
         };
 // Add the request to the RequestQueue.
