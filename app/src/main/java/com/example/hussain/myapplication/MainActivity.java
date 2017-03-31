@@ -10,7 +10,20 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
+
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.zxing.Result;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
@@ -22,6 +35,39 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        RequestQueue queue = Volley.newRequestQueue(this);
+        String url ="http://evoter-hariaakash.rhcloud.com/voters/auth";
+
+// Request a string response from the provided URL.
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject person = new JSONObject(response);
+                            boolean ct = person.getBoolean("status");
+                            Log.e("ct value", Boolean.toString(ct));
+                            if(ct){
+                                Toast.makeText(MainActivity.this, "Aadhar Verified", Toast.LENGTH_LONG).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                            Log.e("Error",e.getMessage());
+                        }
+                        System.out.println(response);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //mTextView.setText("That didn't work!");
+            }
+        }){
+            @Override
+            public byte[] getBody() throws AuthFailureError {
+                String your_string_json = "1234"; // put your json
+                return your_string_json.getBytes();
+            }
+        };
        /* FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
