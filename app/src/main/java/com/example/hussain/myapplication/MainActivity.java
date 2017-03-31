@@ -1,5 +1,7 @@
 package com.example.hussain.myapplication;
 
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void handleResult(Result rawResult) {
+    public void handleResult(final Result rawResult) {
         // Do something with the result here
 
         Log.e("handler", rawResult.getText()); // Prints scan results
@@ -81,6 +83,14 @@ public class MainActivity extends AppCompatActivity implements ZXingScannerView.
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Scan Result");
         builder.setMessage(rawResult.getText());
+        builder.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent=new Intent(MainActivity.this,sender.class);
+                intent.putExtra("br",rawResult.getText());
+                startActivity(intent);
+            }
+        });
         AlertDialog alert1 = builder.create();
         alert1.show();
 
